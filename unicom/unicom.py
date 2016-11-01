@@ -1,6 +1,7 @@
 import xlrd
 import xlwt
 import datetime
+import time
 
 ## kaihu
 ## 9 yufen
@@ -96,8 +97,41 @@ def datetime_offset_by_month(datetime1, n=1):
 
     return datetime2.replace(day=datetime1.day)
 
-filename = "data/kh.xlsx"
-data_k = readExcel(filename)
-fielname = "data/xf.xlsx"
-data_x = readExcel(fielname)
-process(data_k,data_x)
+# filename = "data/kh.xlsx"
+# data_k = readExcel(filename)
+# fielname = "data/xf.xlsx"
+# data_x = readExcel(fielname)
+# process(data_k,data_x)
+
+def writeIntofile(file,content):
+    file_object = open(file, 'w')
+    file_object.write(content)
+    file_object.close()
+
+def get_arrearage_user(txt_file):
+    file  = open(txt_file,"r").readlines()
+    index_remain,index_id,index_product,index_name,index_contact = 12,0,3,1,-2
+    # index_remain, index_id, index_product = 11, 0, 2
+    data =[]
+    for line in file:
+        if "not unicom" in line:
+            continue
+        data.append(line.split("\t"))
+    string = ""
+    for user_data in data:
+        id = user_data[index_id]
+        product = user_data[index_product]
+        name = user_data[index_name]
+        remain = float(user_data[index_remain])
+        contact =  user_data[index_contact]
+        if not remain >0:
+            string+=str(id)+"\t"+str(name)+"\t"+str(product)+"\t"+str(remain)+"\t"+str(contact)+"\n"
+
+    tiemstr = time.strftime("%Y-%m-%d %H %M %S", time.localtime())
+    filename = "E:/PythonWorkSpace/unicom/data/" + tiemstr + "1.txt"
+    # filename = re.sub("\\\\","\\")
+    # print(filename)
+    writeIntofile(filename, string)
+
+txt_file ="E:\PythonWorkSpace/unicom\data/2016-11-01 22 54 47.txt"
+get_arrearage_user(txt_file)
